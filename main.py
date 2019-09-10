@@ -1,11 +1,12 @@
-#!/usr/bin/env python3    ¡¡¡ OK !!!
+#!/usr/bin/env python3
 from __future__ import print_function
 import matplotlib as mp
 import datetime
 
 mp.use('TkAgg')
 mp.use('Agg')
-from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg, NavigationToolbar2TkAgg
+from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
+from matplotlib.backends.backend_qt4agg import NavigationToolbar2QT
 from matplotlib.backend_bases import key_press_handler
 from matplotlib.figure import Figure
 from matplotlib.widgets import Cursor
@@ -395,7 +396,8 @@ class Application:
             global t_timeout
             timeout_state = False
             t0 = time.time()  # Start loop time stamp.
-            tic = time.clock()
+            #tic = time.clock()
+            tic = time.process_time()
             while ((data_rxd < num_points) and (timeout_state == False)):
                 if serial_avr.inWaiting():
                     lectura = serial_avr.read(serial_avr.inWaiting())
@@ -515,7 +517,10 @@ class Application:
             adc_res, adc_bits, acc_sens, h2, sy, fmax
 
         tl = len(twf)
-        fstep = fmax / (tl / 2)
+        if tl > 0:
+            fstep = fmax / (tl / 2)
+        else:
+            fstep = 0
         tmp = [0] * tl
         bias = np.mean(twf)
 
@@ -763,7 +768,8 @@ class Application:
         adc_res = adc_mVolts / (2 ** adc_bits) / 1000
         bias = 1.65
 
-        tic = time.clock()
+        #tic = time.clock()
+        tic = time.process_time()
         if filnam != '':
 
             sample_array = np.genfromtxt(fl, delimiter="\t")
@@ -808,13 +814,15 @@ class Application:
             self.do_fft(chan_no=1)
             self.prep_data()
             self.plot()
-            toc = time.clock()
+            #toc = time.clock()
+            toc = time.process_time()
             #print(toc - tic)
 
     def open_twf(self, filnam):
         global sample_rate, channel_1, channel_2, channel_3, channel_4, l, twf, fstep, message, plot_title, \
             fl, fmax, acc_sens, channels, num_points, max_freq, twflen, adc_res, adc_bits, adc_mVolts
-        tic = time.clock()
+        #tic = time.clock()
+        tic = time.process_time()
         if filnam != '':
             arch = open(filnam, "r")
             data_arch = arch.read()
@@ -866,7 +874,8 @@ class Application:
             self.do_fft(chan_no=1)
             self.prep_data()
             self.plot()
-            toc = time.clock()
+            #toc = time.clock()
+            toc = time.process_time()
             #print(toc - tic)
 
     def save_file(self):
